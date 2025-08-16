@@ -1,0 +1,30 @@
+{
+  "name": "novatrail-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "npx parcel index.html",
+    "build": "npx parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bijaylaxmibehera/nova-trail.git"
+  },
+  "author": "bijaylaxmi behera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bijaylaxmibehera/nova-trail/issues"
+  },
+  "homepage": "https://github.com/bijaylaxmibehera/nova-trail#readme",
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.12",
+    "axios": "^1.11.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.8.1",
+    "tailwindcss": "^4.1.12"
+  },
+  "devDependencies": {
+    "parcel": "^2.15.4"
+  }
+}

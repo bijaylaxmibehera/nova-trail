@@ -37,6 +37,7 @@ def extract_skills(text: str):
             found.add(match[0])
     return found
 
+
 def fetch_coursera_courses(skill, limit=3):
     """Fetch courses from Coursera (fallback: scraping public catalog)."""
     try:
@@ -75,6 +76,7 @@ def recommend_courses(missing_skills):
         all_recs.extend(fetch_coursera_courses(skill))
     return all_recs
 
+
 def fetch_internships(skills, location="India", limit=5):
     """Fetch internships from JSearch API (RapidAPI)."""
     headers = {
@@ -88,17 +90,30 @@ def fetch_internships(skills, location="India", limit=5):
             "page": "1",
             "num_pages": "1"
         }
-        response = requests.get(JSEARCH_URL, headers=headers, params=params)
-        if response.status_code == 200:
-            jobs = response.json().get("data", [])
-            for job in jobs[:limit]:
-                internships.append({
-                    "title": job.get("job_title"),
-                    "company": job.get("employer_name"),
-                    "location": job.get("job_city"),
-                    "url": job.get("job_apply_link"),
-                    "skill": skill
-                })
+        try:
+            response = requests.get(JSEARCH_URL, headers=headers, params=params)
+            if response.status_code == 200:
+                jobs = response.json().get("data", [])
+                for job in jobs[:limit]:
+                    internships.append({
+                        "title": job.get("job_title"),
+                        "company": job.get("employer_name"),
+                        "location": job.get("job_city"),
+                        "url": job.get("job_apply_link"),
+                        "skill": skill
+                    })
+        except Exception:
+            continue
+
+    # fallback if nothing found
+    if not internships:
+        internships.append({
+            "title": "Explore internships manually",
+            "company": "Multiple",
+            "location": location,
+            "url": "https://internshala.com/internships/",
+            "skill": "general"
+        })
     return internships
 
 # ---------------- API ----------------
@@ -116,8 +131,9 @@ def analyze_job():
     # Real course recommendations from Coursera
     course_recs = recommend_courses(missing_skills)
 
-    # Real internship recommendations from JSearch
-    internship_recs = fetch_internships(missing_skills, location)
+    # Internship recommendations: based on both resume and missing skills
+    all_skills = resume_skills.union(missing_skills)
+    internship_recs = fetch_internships(all_skills, location)
 
     return jsonify({
         "resume_skills": list(resume_skills),
